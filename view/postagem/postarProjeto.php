@@ -38,7 +38,7 @@
         }
         ?>
 
-        <form action="salvarProjeto.php" method="POST" enctype="multipart/form-data">
+        <form action="../../controller/postagemController/cadastroprojeto.php" method="POST" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="titulo" class="form-label">Título do Projeto</label>
                 <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Digite o título" required>
@@ -50,13 +50,32 @@
             </div>
 
             <div class="mb-3">
+                <label for="id_categoria" class="form-label">Categoria</label>
+                <select class="form-select" id="id_categoria" name="id_categoria" required>
+                    <option value="">Selecione uma categoria</option>
+                    <?php
+                    include_once '../../model/Categoria.php';
+                    $categorias = Categoria::listar();
+                    foreach ($categorias as $categoria) {
+                        echo '<option value="'.$categoria['id_categoria'].'">'.htmlspecialchars($categoria['nome']).'</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+
+            <div class="mb-3">
                 <label for="imagem" class="form-label">Imagem do Projeto</label>
                 <input class="form-control" type="file" id="imagem" name="imagem" accept="image/*" onchange="previewImagem()" required>
                 <img id="preview-img" src="#" alt="Pré-visualização da imagem">
             </div>
 
-            <button type="submit" class="btn btn-primary w-100">Salvar Projeto</button>
+            <button type="submit" class="btn btn-primary w-100 mb-2">Salvar Projeto</button>
+
         </form>
+
+        <!-- Botão Voltar -->
+        <a href="../../view/index.php" class="btn btn-secondary w-100">Voltar</a>
+
     </div>
 </div>
 

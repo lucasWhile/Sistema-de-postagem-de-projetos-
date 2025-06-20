@@ -165,34 +165,41 @@ session_start();
 </div>
 
 
-        <!-- Área de Cards -->
+   
+
         <div class="col-12 col-md-9">
-            <div class="row g-3">
+    <div class="row g-3">
 
+        <?php
+        include_once '../model/Projeto.php';
+        $projetos = Projeto::listar();
+
+        if (!empty($projetos)) {
+            foreach ($projetos as $projeto) { ?>
                 <div class="col-12 col-sm-6">
                     <div class="card h-100">
-                        <img src="https://via.placeholder.com/350x150" class="card-img-top" alt="Imagem Card 1">
+                        <?php if (!empty($projeto['imagem'])) : ?>
+                            <img src="../uploads/<?php echo $projeto['imagem']; ?>" class="card-img-top" alt="Imagem do Projeto">
+                        <?php else : ?>
+                            <img src="https://via.placeholder.com/350x150" class="card-img-top" alt="Imagem Padrão">
+                        <?php endif; ?>
+
                         <div class="card-body">
-                            <h5 class="card-title">Título do Card 1</h5>
-                            <p class="card-text">Descrição breve ou conteúdo resumido do card 1.</p>
-                            <a href="#" class="btn btn-outline-primary">Ver Mais</a>
+                            <h5 class="card-title"><?php echo htmlspecialchars($projeto['titulo']); ?></h5>
+                            <p class="card-text"><?php echo nl2br(htmlspecialchars($projeto['descricao'])); ?></p>
+                            <a href="visualizarProjeto.php?id=<?php echo $projeto['id_postagem']; ?>" class="btn btn-outline-primary">Ver Mais</a>
                         </div>
                     </div>
                 </div>
+            <?php }
+        } else {
+            echo '<p>Nenhum projeto cadastrado.</p>';
+        }
+        ?>
 
-                <div class="col-12 col-sm-6">
-                    <div class="card h-100">
-                        <img src="https://via.placeholder.com/350x150" class="card-img-top" alt="Imagem Card 2">
-                        <div class="card-body">
-                            <h5 class="card-title">Título do Card 2</h5>
-                            <p class="card-text">Descrição breve ou conteúdo resumido do card 2.</p>
-                            <a href="#" class="btn btn-outline-primary">Ver Mais</a>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+    </div>
         </div>
+
 
     </div>
 </div>
