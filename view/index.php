@@ -52,7 +52,7 @@ session_start();
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Meu Site</a>
+        <a class="navbar-brand" href="index.php">WorkShow</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -85,9 +85,7 @@ session_start();
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="../view/postagem/postarProjeto.php">Cadastrar Projetos</a></li>
                             <li><a class="dropdown-item" href="../view/postagem/listarProjeto.php">Listar Projetos</a></li>
-                            <li><a class="dropdown-item" href="../view/postagem/postarProjeto.php">Listar Projetos</a></li>
-
-
+            
                         </ul>
                  </li>
 
@@ -230,7 +228,7 @@ if (isset($_GET['msg'])) {
 <!-- Rodapé -->
 <footer>
     <div class="container text-center">
-        <p>&copy; 2025 Meu Site. Todos os direitos reservados.</p>
+        <p>&copy; 2025 WorkShow. Todos os direitos reservados.</p>
         <p>
             <a href="#">Política de Privacidade</a> | 
             <a href="#">Termos de Uso</a> | 

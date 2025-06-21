@@ -55,6 +55,10 @@
                     <option value="">Selecione uma categoria</option>
                     <?php
                     include_once '../../model/Categoria.php';
+                     if (!Categoria::existeCategoria()) {
+                        header("Location:../categoria/cadastrarcategoria.php?msg=Você precisa cadastrar uma categoria antes de criar projetos.");
+                        exit;
+                    }
                     $categorias = Categoria::listar();
                     foreach ($categorias as $categoria) {
                         echo '<option value="'.$categoria['id_categoria'].'">'.htmlspecialchars($categoria['nome']).'</option>';

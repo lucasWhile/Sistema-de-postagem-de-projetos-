@@ -114,6 +114,36 @@ class Categoria {
         }
     }
 
+    public static function temProjetosVinculados($id_categoria) {
+    $conexao = new Conexao();
+    $conn = $conexao->getConnection();
+
+    $stmt = $conn->prepare("SELECT COUNT(*) as total FROM postagem WHERE id_categoria = ?");
+    $stmt->bind_param("i", $id_categoria);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+
+    return ($row['total'] > 0);
+}
+
+public static function existeCategoria() {
+    $conexao = new Conexao();
+    $conn = $conexao->getConnection();
+
+    $sql = "SELECT COUNT(*) AS total FROM categorias";
+    $result = $conn->query($sql);
+
+    if ($result) {
+        $row = $result->fetch_assoc();
+        return ($row['total'] > 0);
+    } else {
+        return false;
+    }
+}
+
+
+
 
     
 }
