@@ -37,12 +37,18 @@ class Projeto {
     }
 
     // Listar todos os projetos
-    public static function listar() {
+  public static function listar($id_categoria = null) {
     $conexao = new Conexao();
     $conn = $conexao->getConnection();
 
-    $sql = "SELECT * FROM postagem ORDER BY id_postagem DESC";
-    $result = $conn->query($sql);
+    if ($id_categoria) {
+        $stmt = $conn->prepare("SELECT * FROM postagem WHERE id_categoria = ? ORDER BY id_postagem DESC");
+        $stmt->bind_param("i", $id_categoria);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    } else {
+        $result = $conn->query("SELECT * FROM postagem ORDER BY id_postagem DESC");
+    }
 
     $projetos = [];
     while ($row = $result->fetch_assoc()) {
@@ -50,7 +56,8 @@ class Projeto {
     }
 
     return $projetos;
-}
+    }
+
 
     // Buscar projeto por ID
     public static function buscarPorId($id) {
@@ -94,5 +101,23 @@ class Projeto {
             return false;
         }
     }
+
+    public static function listarPorUsuario($id_usuario) {
+    $conexao = new Conexao();
+    $conn = $conexao->getConnection();
+
+    $stmt = $conn->prepare("SELECT * FROM postagem WHERE id_usuario = ? ORDER BY id_postagem DESC");
+    $stmt->bind_param("i", $id_usuario);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $projetos = [];
+    while ($row = $result->fetch_assoc()) {
+        $projetos[] = $row;
+    }
+
+    return $projetos;
+}
+
 }
 ?>

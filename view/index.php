@@ -58,67 +58,71 @@ session_start();
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link active" href="#">Início</a></li>
-                <li class="nav-item"><a class="nav-link" href="../view/usuario/NovoUsuario.php">Opções usuarios</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Contato</a></li>
-
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Opções usuarios
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="../view/usuario/NovoUsuario.php">Cadastrar Usuarios</a></li>
-                        <li><a class="dropdown-item" href="../view/usuario/ListarUsuario.php">Listar Usuarios</a></li>
-                        <li><a class="dropdown-item" href="#">Editar Usuarios</a></li>
-                    </ul>
-                </li>
-
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Opções Projetos
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="../view/postagem/postarProjeto.php">Cadastrar Projetos</a></li>
-                        <li><a class="dropdown-item" href="../view/usuario/ListarUsuario.php">Listar Usuarios</a></li>
-                        <li><a class="dropdown-item" href="#">Editar Usuarios</a></li>
-                    </ul>
-                </li>
-
-                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Opções Categorias
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="../view/categoria/cadastrarcategoria.php">Cadastrar Categoria</a></li>
-                        <li><a class="dropdown-item" href="#">Listar Usuarios</a></li>
-                        <li><a class="dropdown-item" href="#">Editar Usuarios</a></li>
-                    </ul>
-                </li>
-
-
-                <?php 
-                if(isset($_SESSION['id_usuario']) ){ ?>
-                      <li class="nav-item"><a class="nav-link" href="../controller/usuarioController/logoutUsuario.php">Sair</a></li>
-                    <?php } else{?>
-                <li class="nav-item"><a class="nav-link" href="../view/usuario/LogarUsuario.php">Entrar</a></li>
-                     <?php } ?>
-            </ul>
+                <li class="nav-item"><a class="nav-link active" href="index.php">Início</a></li>
+        
 
             
+                    <?php
+                    if(isset($_SESSION['nivel']) && $_SESSION['nivel']=='administrador' ) {  ?>
+                        
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Opções Usuários</a>
+                         <ul class="dropdown-menu">
+                             <li><a class="dropdown-item" href="../view/usuario/NovoUsuario.php">Cadastrar Usuários</a></li>
+                             <li><a class="dropdown-item" href="../view/usuario/ListarUsuario.php">Listar Usuários</a></li>
+                        </ul>
+                     </li>     
 
+                    <?php   } 
+                    ?>
+
+
+                     <?php
+                 if(isset($_SESSION['nivel']) && ($_SESSION['nivel'] == 'professor' || $_SESSION['nivel'] == 'administrador')) {  ?>
+
+                  <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Opções Projetos</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="../view/postagem/postarProjeto.php">Cadastrar Projetos</a></li>
+                            <li><a class="dropdown-item" href="../view/postagem/listarProjeto.php">Listar Projetos</a></li>
+                            <li><a class="dropdown-item" href="../view/postagem/postarProjeto.php">Listar Projetos</a></li>
+
+
+                        </ul>
+                 </li>
+
+                 <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Opções Categorias</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="../view/categoria/cadastrarcategoria.php">Cadastrar Categoria</a></li>
+                    </ul>
+                </li>
+
+                  <?php   } 
+                ?>
+
+
+         
+
+                <?php if (isset($_SESSION['id_usuario'])) { ?>
+                    <li class="nav-item"><a class="nav-link" href="../controller/usuarioController/logoutUsuario.php">Sair</a></li>
+                <?php } else { ?>
+                    <li class="nav-item"><a class="nav-link" href="../view/usuario/LogarUsuario.php">Entrar</a></li>
+                <?php } ?>
+            </ul>
         </div>
     </div>
 </nav>
 
-  <?php
-        if (isset($_GET['msg'])) {
-            $mensagem = htmlspecialchars($_GET['msg']);
-            echo "<div class='alert alert-sucess alert-dismissible fade show' role='alert'>
-                    $mensagem
-                    <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
-                  </div>";
-        }
-    ?>
+<?php
+if (isset($_GET['msg'])) {
+    $mensagem = htmlspecialchars($_GET['msg']);
+    echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>
+            $mensagem
+            <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+          </div>";
+}
+?>
 
 <!-- Banner -->
 <div class="container-fluid p-0 m-0">
@@ -129,77 +133,96 @@ session_start();
 <div class="container mt-4">
     <div class="row">
 
-        <!-- Sidebar -->
- <div class="col-12 col-md-3 mb-3">
+
+
+       <div class="col-12 col-md-3 mb-3">
     <div class="sidebar">
+        <?php
+        include_once '../model/Categoria.php';
+        $categorias = Categoria::listar();
+
+        $categoriaSelecionada = isset($_GET['id_categoria']) ? intval($_GET['id_categoria']) : null;
+
+        // Definindo o texto do botão principal
+        $nomeCategoriaSelecionada = "Categorias";
+        if (!is_null($categoriaSelecionada)) {
+            foreach ($categorias as $categoria) {
+                if ($categoria['id_categoria'] == $categoriaSelecionada) {
+                    $nomeCategoriaSelecionada = htmlspecialchars($categoria['nome']);
+                    break;
+                }
+            }
+        }
+
+        // Classe para o link "Ver Todos"
+        $classeTodos = is_null($categoriaSelecionada) ? 'active' : '';
+        ?>
+
         <h5>
-            <button class="btn btn-primary w-100 " type="button" data-bs-toggle="collapse" data-bs-target="#menuLateral" aria-expanded="false" aria-controls="menuLateral">
-                Categorias
+            <button class="btn btn-primary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#menuLateral" aria-expanded="false" aria-controls="menuLateral">
+                <?php echo $nomeCategoriaSelecionada; ?>
             </button>
         </h5>
 
-        <!-- Menu: fechado no mobile / aberto no desktop -->
         <div class="collapse d-md-block" id="menuLateral">
             <div class="list-group mt-2">
+                <a href="index.php" class="list-group-item list-group-item-action <?php echo $classeTodos; ?>">
+                    Ver Todos
+                </a>
+
                 <?php
-                include_once '../model/Categoria.php';
-                $categorias = Categoria::listar();
-
-            
-                    if (!empty($categorias)) {
-                        foreach ($categorias as $categoria) { ?>
-                            <a href="../../view/categoria/cadastrarCategoria.php?id=<?php echo $categoria['id_categoria']; ?>" class="list-group-item list-group-item-action">
-                                <?php echo htmlspecialchars($categoria['nome']); ?>
-                            </a>
-                        <?php }
-                    } else {
-                        echo '<span class="list-group-item">Nenhuma categoria cadastrada.</span>';
-                    }
-                    ?>
-
-
+                if (!empty($categorias)) {
+                    foreach ($categorias as $categoria) {
+                        $classeAtiva = ($categoriaSelecionada == $categoria['id_categoria']) ? 'active' : '';
+                        ?>
+                        <a href="index.php?id_categoria=<?php echo $categoria['id_categoria']; ?>" class="list-group-item list-group-item-action <?php echo $classeAtiva; ?>">
+                            <?php echo htmlspecialchars($categoria['nome']); ?>
+                        </a>
+                    <?php }
+                } else {
+                    echo '<span class="list-group-item">Nenhuma categoria cadastrada.</span>';
+                }
+                ?>
             </div>
         </div>
-
     </div>
 </div>
 
 
-   
-
+        <!-- Área de Projetos -->
         <div class="col-12 col-md-9">
-    <div class="row g-3">
+            <div class="row g-3">
 
-        <?php
-        include_once '../model/Projeto.php';
-        $projetos = Projeto::listar();
+                <?php
+                include_once '../model/Projeto.php';
+                $id_categoria = isset($_GET['id_categoria']) ? intval($_GET['id_categoria']) : null;
+                $projetos = Projeto::listar($id_categoria);
 
-        if (!empty($projetos)) {
-            foreach ($projetos as $projeto) { ?>
-                <div class="col-12 col-sm-6">
-                    <div class="card h-100">
-                        <?php if (!empty($projeto['imagem'])) : ?>
-                            <img src="../uploads/<?php echo $projeto['imagem']; ?>" class="card-img-top" alt="Imagem do Projeto">
-                        <?php else : ?>
-                            <img src="https://via.placeholder.com/350x150" class="card-img-top" alt="Imagem Padrão">
-                        <?php endif; ?>
+                if (!empty($projetos)) {
+                    foreach ($projetos as $projeto) { ?>
+                        <div class="col-12 col-sm-6">
+                            <div class="card h-100">
+                                <?php if (!empty($projeto['imagem'])) : ?>
+                                    <img src="../uploads/<?php echo $projeto['imagem']; ?>" class="card-img-top" alt="Imagem do Projeto">
+                                <?php else : ?>
+                                    <img src="https://via.placeholder.com/350x150" class="card-img-top" alt="Imagem Padrão">
+                                <?php endif; ?>
 
-                        <div class="card-body">
-                            <h5 class="card-title"><?php echo htmlspecialchars($projeto['titulo']); ?></h5>
-                            <p class="card-text"><?php echo nl2br(htmlspecialchars($projeto['descricao'])); ?></p>
-                            <a href="visualizarProjeto.php?id=<?php echo $projeto['id_postagem']; ?>" class="btn btn-outline-primary">Ver Mais</a>
+                                <div class="card-body">
+                                    <h5 class="card-title"><?php echo htmlspecialchars($projeto['titulo']); ?></h5>
+                                    <p class="card-text"><?php echo nl2br(htmlspecialchars($projeto['descricao'])); ?></p>
+                                    <a href="../view/postagem/visualizarProjeto.php?id=<?php echo $projeto['id_postagem']; ?>" class="btn btn-outline-primary">Ver Mais</a>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            <?php }
-        } else {
-            echo '<p>Nenhum projeto cadastrado.</p>';
-        }
-        ?>
+                    <?php }
+                } else {
+                    echo '<p>Nenhum projeto cadastrado nesta categoria.</p>';
+                }
+                ?>
 
-    </div>
+            </div>
         </div>
-
 
     </div>
 </div>

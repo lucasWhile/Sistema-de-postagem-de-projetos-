@@ -68,9 +68,9 @@
                 <label for="nivel" class="form-label">Nível</label>
                 <select class="form-select" id="nivel" name="nivel" required>
                     <option value="">Selecione o nível</option>
-                    <option value="Administrador">Administrador</option>
-                    <option value="Usuário">Usuário</option>
-                    <option value="Convidado">Convidado</option>
+                    <option value="administrador">Administrador</option>
+                    <option value="professor">Professor</option>
+                    <option value="convidado">Convidado</option>
                 </select>
             </div>
 
