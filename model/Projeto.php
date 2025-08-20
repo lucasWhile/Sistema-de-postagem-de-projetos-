@@ -16,7 +16,7 @@ class Projeto {
         $this->titulo = $titulo;
         $this->descricao = $descricao;
         $this->imagem = $imagem;
-        $this->data = $data;
+        $this->data = $data ;
         $this->id_usuario = $id_usuario;
         $this->id_categoria = $id_categoria;
     }
