@@ -15,7 +15,7 @@ class Projeto {
         $this->id_postagem = $id_postagem;
         $this->titulo = $titulo;
         $this->descricao = $descricao;
-        $this->imagem = $imagem;
+        $this->imagem = $imagem ;
         $this->data = $data ;
         $this->id_usuario = $id_usuario;
         $this->id_categoria = $id_categoria;
