@@ -30,3 +30,11 @@ create table postagem(
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
     FOREIGN KEY (id_categoria) REFERENCES categorias(id_categoria)
 );
+
+
+create table image{
+    id_imagem INTEGER PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(50) NOT NULL,
+    id_postagem int,
+    FOREIGN KEY (id_postagem) REFERENCES postagem(id_postagem)
+}

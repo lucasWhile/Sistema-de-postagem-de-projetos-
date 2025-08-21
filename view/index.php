@@ -200,11 +200,33 @@ if (isset($_GET['msg'])) {
                     foreach ($projetos as $projeto) { ?>
                         <div class="col-12 col-sm-6">
                             <div class="card h-100">
-                                <?php if (!empty($projeto['imagem'])) : ?>
-                                    <img src="../uploads/<?php echo $projeto['imagem']; ?>" class="card-img-top" alt="Imagem do Projeto">
-                                <?php else : ?>
-                                    <img src="https://via.placeholder.com/350x150" class="card-img-top" alt="Imagem Padrão">
-                                <?php endif; ?>
+                         <div id="carousel-<?php echo $projeto['id_postagem']; ?>" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <?php if (!empty($projeto['imagens'])): ?>
+            <?php foreach ($projeto['imagens'] as $index => $img): ?>
+                <div class="carousel-item <?php echo ($index === 0) ? 'active' : ''; ?>">
+                    <img src="../uploads/<?php echo htmlspecialchars($img['nome']); ?>" class="d-block w-100" style="height:200px; object-fit:cover;" alt="Imagem do Projeto">
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <div class="carousel-item active">
+                <img src="https://via.placeholder.com/350x150" class="d-block w-100" alt="Imagem Padrão">
+            </div>
+        <?php endif; ?>
+    </div>
+    <?php if (!empty($projeto['imagens']) && count($projeto['imagens']) > 1): ?>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carousel-<?php echo $projeto['id_postagem']; ?>" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carousel-<?php echo $projeto['id_postagem']; ?>" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Próximo</span>
+        </button>
+    <?php endif; ?>
+</div>
+
+
 
                                 <div class="card-body">
                                     <h5 class="card-title"><?php echo htmlspecialchars($projeto['titulo']); ?></h5>
