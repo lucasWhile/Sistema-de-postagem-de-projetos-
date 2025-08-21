@@ -59,7 +59,7 @@ class Projeto {
         $conn = $conexao->getConnection();
 
         // Deleta imagens relacionadas
-        $stmtImg = $conn->prepare("DELETE FROM imagem WHERE id_postagem = ?");
+        $stmtImg = $conn->prepare("DELETE FROM image WHERE id_postagem = ?");
         $stmtImg->bind_param("i", $id);
         $stmtImg->execute();
         $stmtImg->close();
@@ -122,7 +122,7 @@ class Projeto {
 
         $projetos = [];
         while ($row = $result->fetch_assoc()) {
-            $stmtImg = $conn->prepare("SELECT * FROM imagem WHERE id_postagem = ?");
+            $stmtImg = $conn->prepare("SELECT * FROM image WHERE id_postagem = ?");
             $stmtImg->bind_param("i", $row['id_postagem']);
             $stmtImg->execute();
             $resultImg = $stmtImg->get_result();
@@ -154,7 +154,7 @@ class Projeto {
         $projeto = $result->fetch_assoc();
 
         if ($projeto) {
-            $stmtImg = $conn->prepare("SELECT * FROM imagem WHERE id_postagem = ?");
+            $stmtImg = $conn->prepare("SELECT * FROM image WHERE id_postagem = ?");
             $stmtImg->bind_param("i", $id);
             $stmtImg->execute();
             $resultImg = $stmtImg->get_result();
@@ -171,5 +171,77 @@ class Projeto {
         $conexao->closeConnection();
         return $projeto;
     }
+
+
+// ... (rest of the class)
+
+public function atualizarComImagens($idsRemover, $novasImagens) {
+    try {
+        $conexao = new Conexao();
+        $conn = $conexao->getConnection();
+
+        // Inicia a transação
+        $conn->begin_transaction();
+
+        // 1. Atualiza dados do projeto (título, descrição, etc.)
+        $stmt = $conn->prepare("UPDATE postagem SET titulo = ?, descricao = ?, id_categoria = ? WHERE id_postagem = ?");
+        $stmt->bind_param("ssii", $this->titulo, $this->descricao, $this->id_categoria, $this->id_postagem);
+        $stmt->execute();
+        $stmt->close();
+
+        // 2. Remove as imagens do servidor e do banco de dados, se houver IDs para remover
+        if (!empty($idsRemover)) {
+            // Prepara a consulta para buscar os nomes dos arquivos
+            $placeholder = implode(',', array_fill(0, count($idsRemover), '?'));
+            $stmt = $conn->prepare("SELECT nome FROM image WHERE id_imagem IN ($placeholder)");
+            
+            // Cria a string de tipos (ex: 'ii')
+            $tipos = str_repeat('i', count($idsRemover));
+            $stmt->bind_param($tipos, ...$idsRemover);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $imagensParaDeletar = $result->fetch_all(MYSQLI_ASSOC);
+            $stmt->close();
+
+            // Deleta os arquivos do servidor
+            foreach ($imagensParaDeletar as $img) {
+                $caminho = __DIR__ . '/../uploads/' . $img['nome'];
+                if(file_exists($caminho)) {
+                    unlink($caminho);
+                }
+            }
+
+            // Deleta do banco de dados
+            $del = $conn->prepare("DELETE FROM image WHERE id_imagem IN ($placeholder)");
+            $del->bind_param($tipos, ...$idsRemover);
+            $del->execute();
+            $del->close();
+        }
+
+        // 3. Adiciona as novas imagens ao banco de dados
+        foreach ($novasImagens as $img) {
+            $stmt = $conn->prepare("INSERT INTO image (nome, id_postagem) VALUES (?, ?)");
+            $stmt->bind_param("si", $img['nome'], $this->id_postagem);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        // Confirma a transação
+        $conn->commit();
+        $conexao->closeConnection();
+        return true;
+
+    } catch (Exception $e) {
+        if (isset($conn)) {
+            $conn->rollback();
+        }
+        if (isset($conexao)) {
+            $conexao->closeConnection();
+        }
+        // Para debug, você pode temporariamente habilitar esta linha
+        // echo "Erro: " . $e->getMessage();
+        return false;
+    }
+}
 }
 ?>
