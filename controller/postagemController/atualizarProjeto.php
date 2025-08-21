@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Crie o objeto do projeto
-    $projeto = new Projeto($titulo, $descricao, null, $data, $id_usuario, $id_categoria, $id_postagem);
+$projeto = new Projeto($titulo, $descricao, $data, $id_usuario, $id_categoria, $id_postagem);
 
     // Chame o método de atualização com os IDs a remover e as novas imagens
     if ($projeto->atualizarComImagens($idsRemover, $novasImagens)) {
